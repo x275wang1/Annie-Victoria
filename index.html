@@ -196,6 +196,9 @@
                     <button onclick="useLocalMode()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-lg font-medium transition-colors">
                         使用本地模式（数据不同步）
                     </button>
+                    <button onclick="clearConfig()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 py-3 rounded-lg font-medium transition-colors">
+                        清除配置
+                    </button>
                 </div>
             </div>
             
@@ -287,8 +290,8 @@
         
         <!-- 添加跳动的book图片和星星 -->
         <div class="my-6 flex justify-center items-center relative">
-            <img src="https://raw.githubusercontent.com/anniewang/victoria-annie-cute-website/main/public/images/星星.png" alt="星星" class="absolute w-[550px] h-[550px] object-contain animate-pulse z-0 opacity-60">
-            <img src="https://raw.githubusercontent.com/anniewang/victoria-annie-cute-website/main/public/images/book.png" alt="book" class="book-image relative z-10 w-[432px] h-[432px] md:w-[432px] md:h-[432px] object-contain">
+            <img src="https://x275wang1.github.io/Annie-Victoria/public/images/星星.png" alt="星星" class="absolute w-[550px] h-[550px] object-contain animate-pulse z-0 opacity-60">
+            <img src="https://x275wang1.github.io/Annie-Victoria/public/images/book.png" alt="book" class="book-image relative z-10 w-[432px] h-[432px] md:w-[432px] md:h-[432px] object-contain">
         </div>
         
         <p class="text-xl md:text-2xl text-gray-600 mb-2">
@@ -360,7 +363,7 @@
             <div class="flex items-center mb-8">
                 <div class="w-12 h-1 bg-secondary rounded-full mr-4"></div>
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-800">我们的日记本</h2>
-                <img src="https://raw.githubusercontent.com/anniewang/victoria-annie-cute-website/main/public/images/看书.png" alt="看书" class="ml-4 w-24 h-24 object-contain animate-bounce hover:animate-spin transition-all duration-500 hover:scale-110">
+                <img src="https://x275wang1.github.io/Annie-Victoria/public/images/看书.png" alt="看书" class="ml-4 w-24 h-24 object-contain animate-bounce hover:animate-spin transition-all duration-500 hover:scale-110">
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -492,11 +495,11 @@
 
     <!-- 页面底部素材 -->
     <div class="page-footer">
-        <img src="https://raw.githubusercontent.com/anniewang/victoria-annie-cute-website/main/public/images/cloud.png" alt="可爱云朵和星星" class="footer-cloud" />
+        <img src="https://x275wang1.github.io/Annie-Victoria/public/images/cloud.png" alt="可爱云朵和星星" class="footer-cloud" />
         <!-- 会说话的兔子 -->
         <div id="bunny" class="bunny">
             <div class="relative">
-                <img src="https://raw.githubusercontent.com/anniewang/victoria-annie-cute-website/main/public/images/penny.png" alt="可爱的小兔子" class="bunny-image rounded-full border-4 border-blue-200">
+                <img src="https://x275wang1.github.io/Annie-Victoria/public/images/penny.png" alt="可爱的小兔子" class="bunny-image rounded-full border-4 border-blue-200">
                 <div id="bunny-speech" class="hidden absolute -top-24 -left-48 bg-white rounded-2xl p-3 shadow-lg border-2 border-blue-200 bunny-talk max-w-[180px]">
                     <p id="bunny-text" class="text-sm">你们好呀！😊</p>
                     <div class="absolute -bottom-3 left-10 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white"></div>
@@ -712,9 +715,14 @@
                 storage.saveConfig(apiKey, binId);
                 document.getElementById('setupModal').classList.remove('active');
                 
-                // 重新加载数据
+                // 强制重新加载数据
                 await loadAllData();
                 showToast('配置保存成功！', 'success');
+                
+                // 刷新页面以确保配置生效
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             } catch (error) {
                 showToast('配置失败：' + error.message, 'error');
             }
@@ -726,6 +734,20 @@
             document.getElementById('setupModal').classList.remove('active');
             loadAllData();
             showToast('已切换到本地模式', 'success');
+        }
+
+        // 清除配置
+        function clearConfig() {
+            if (confirm('确定要清除所有配置吗？这将删除API Key和Bin ID。')) {
+                localStorage.removeItem('jsonbin_config');
+                localStorage.removeItem('app_data');
+                storage.loadConfig();
+                document.getElementById('setupModal').classList.remove('active');
+                showToast('配置已清除，请重新配置', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
         }
 
         // 显示设置
