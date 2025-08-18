@@ -205,6 +205,9 @@
                     <button onclick="createTestData()" class="w-full bg-orange-100 hover:bg-orange-200 text-orange-700 py-3 rounded-lg font-medium transition-colors">
                         创建测试数据
                     </button>
+                    <button onclick="inspectJSONBin()" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 py-3 rounded-lg font-medium transition-colors">
+                        检查JSONBin库
+                    </button>
                     <button onclick="exportConfig()" class="w-full bg-green-100 hover:bg-green-200 text-green-700 py-3 rounded-lg font-medium transition-colors">
                         导出配置
                     </button>
@@ -937,6 +940,71 @@
             } catch (error) {
                 console.error('创建测试数据失败:', error);
                 showToast('创建失败：' + error.message, 'error');
+            }
+        }
+
+        // 直接检查JSONBin.io库内容
+        async function inspectJSONBin() {
+            try {
+                showToast('正在检查JSONBin.io库...', 'success');
+                
+                if (storage.isLocal) {
+                    showToast('当前使用本地模式，无法检查远程库', 'error');
+                    return;
+                }
+                
+                if (!storage.apiKey || !storage.binId) {
+                    showToast('请先配置API Key和Bin ID', 'error');
+                    return;
+                }
+                
+                console.log('=== JSONBin.io 库检查 ===');
+                console.log('API Key:', storage.apiKey ? storage.apiKey.substring(0, 10) + '...' : '未设置');
+                console.log('Bin ID:', storage.binId || '未设置');
+                
+                // 检查库是否存在
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${storage.binId}/latest`, {
+                    headers: {
+                        'X-Master-Key': storage.apiKey
+                    }
+                });
+                
+                console.log('响应状态:', response.status);
+                console.log('响应头:', Object.fromEntries(response.headers.entries()));
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('库内容:', data);
+                    
+                    if (data.record) {
+                        const record = data.record;
+                        console.log('数据记录:');
+                        console.log('- 照片数量:', record.memories ? record.memories.length : 0);
+                        console.log('- 日记数量:', record.diaries ? record.diaries.length : 0);
+                        console.log('- 待办数量:', record.todos ? record.todos.length : 0);
+                        console.log('- 消息数量:', record.messages ? record.messages.length : 0);
+                        
+                        showToast(`库检查完成！找到 ${Object.keys(record).length} 个数据类别`, 'success');
+                    } else {
+                        console.log('库存在但无数据记录');
+                        showToast('库存在但无数据记录', 'info');
+                    }
+                } else {
+                    if (response.status === 401) {
+                        console.error('API Key 无效或权限不足');
+                        showToast('API Key 无效或权限不足', 'error');
+                    } else if (response.status === 404) {
+                        console.error('Bin ID 不存在');
+                        showToast('Bin ID 不存在', 'error');
+                    } else {
+                        console.error(`HTTP错误: ${response.status}`);
+                        showToast(`HTTP错误: ${response.status}`, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                console.error('检查JSONBin.io库失败:', error);
+                showToast('检查失败：' + error.message, 'error');
             }
         }
 
