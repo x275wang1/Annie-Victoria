@@ -1,0 +1,22 @@
+{
+  "name": "victoria-annie-cute-website",
+  "version": "1.0.0",
+  "description": "A cute website for Victoria and Annie to record their memories",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d .",
+    "build": "echo 'Build completed'"
+  },
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "multer": "^1.4.3"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "nodemon": "^2.0.14"
+  }
+}
