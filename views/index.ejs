@@ -92,7 +92,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: none;
-            z-index: 9999;
+            z-index: 10001;
         }
 
         .toast.show {
@@ -815,7 +815,14 @@
 
         // 强制同步数据
         async function forceSync() {
+            const btn = document.querySelector('button[onclick="forceSync()"]');
+            const prevHtml = btn ? btn.innerHTML : '';
             try {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-60','cursor-not-allowed');
+                    btn.innerHTML = '<span class="loading mr-2"></span>正在强制同步...';
+                }
                 showToast('正在强制同步数据...', 'success');
                 
                 // 清除本地缓存
@@ -829,9 +836,15 @@
                 // 刷新页面显示
                 setTimeout(() => {
                     window.location.reload();
-                }, 1000);
+                }, 1200);
             } catch (error) {
                 showToast('同步失败：' + error.message, 'error');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-60','cursor-not-allowed');
+                    btn.innerHTML = prevHtml;
+                }
             }
         }
 
@@ -1128,6 +1141,19 @@
             } catch (error) {
                 console.error('Error saving data:', error);
                 showToast('保存失败，数据已保存到本地', 'error');
+            }
+        }
+
+        // 统一渲染函数（修复初始化时调用未定义函数的问题）
+        function renderAllData() {
+            try {
+                renderMemories();
+                renderDiaries();
+                renderTodos();
+                renderMessages();
+            } catch (e) {
+                console.error('渲染数据时出错:', e);
+                showToast('渲染失败', 'error');
             }
         }
 
