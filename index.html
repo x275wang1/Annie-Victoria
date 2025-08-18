@@ -171,14 +171,14 @@
 
     <!-- 初始化设置弹窗 -->
     <div id="setupModal" class="setup-modal">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-gray-800">🔐 配置 JSONBin</h2>
+                <h2 class="text-xl font-bold text-gray-800">🔐 配置 JSONBin</h2>
                 <button onclick="closeSettings()" class="text-gray-400 hover:text-gray-600 text-2xl transition-colors">
                     <i class="fa fa-times"></i>
                 </button>
             </div>
-            <p class="text-gray-600 mb-6">首次使用需要配置 JSONBin.io</p>
+            <p class="text-gray-600 mb-4 text-sm">首次使用需要配置 JSONBin.io</p>
             
             <div class="space-y-4">
                 <div>
@@ -194,7 +194,7 @@
                     <p class="text-xs text-gray-500 mt-1">如果没有，留空会自动创建</p>
                 </div>
                 
-                <div class="pt-4 space-y-2">
+                <div class="pt-3 space-y-2">
                     <button onclick="saveConfig()" class="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg font-medium transition-colors">
                         保存配置
                     </button>
@@ -219,7 +219,7 @@
                 </div>
             </div>
             
-            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+            <div class="mt-4 p-3 bg-blue-50 rounded-lg">
                 <h3 class="font-bold text-sm mb-2">📝 使用说明：</h3>
                 <ol class="text-xs text-gray-600 space-y-1">
                     <li>1. 注册 <a href="https://jsonbin.io" target="_blank" class="text-primary hover:underline">JSONBin.io</a> 账号</li>
@@ -991,6 +991,78 @@
             document.getElementById('setupModal').classList.add('active');
         }
 
+        // 兔子和书本的互动效果
+        function initBunnyBookInteraction() {
+            const bunny = document.getElementById('bunny');
+            const book = document.querySelector('.book-image');
+            
+            if (!bunny || !book) return;
+            
+            // 当鼠标悬停在兔子上时，书本也会兴奋
+            bunny.addEventListener('mouseenter', () => {
+                book.style.animation = 'bookExcitedMagic 0.6s ease-in-out infinite';
+                book.style.filter = 'drop-shadow(0 15px 30px rgba(139, 92, 246, 0.6)) drop-shadow(0 0 25px rgba(99, 102, 241, 0.4))';
+            });
+            
+            bunny.addEventListener('mouseleave', () => {
+                book.style.animation = 'bookMagicalFloat 4s ease-in-out infinite';
+                book.style.filter = 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))';
+            });
+            
+            // 当鼠标悬停在书本上时，兔子也会兴奋
+            book.addEventListener('mouseenter', () => {
+                bunny.style.animation = 'bunnyExcitedDance 0.8s ease-in-out infinite';
+                bunny.style.filter = 'drop-shadow(0 20px 40px rgba(139, 92, 246, 0.6)) drop-shadow(0 0 20px rgba(99, 102, 241, 0.5))';
+            });
+            
+            book.addEventListener('mouseleave', () => {
+                bunny.style.animation = 'bunnyMagicalFloat 6s ease-in-out infinite';
+                bunny.style.filter = 'drop-shadow(0 8px 16px rgba(99, 102, 241, 0.3))';
+            });
+            
+            // 点击兔子的特殊效果
+            bunny.addEventListener('click', () => {
+                // 兔子点击爆炸效果
+                bunny.style.animation = 'bunnyMagicBurst 0.5s ease-out';
+                
+                // 书本也会跟着兴奋
+                book.style.animation = 'bookExcitedMagic 0.6s ease-in-out infinite';
+                
+                // 显示兔子的对话框
+                const speech = document.getElementById('bunny-speech');
+                if (speech) {
+                    speech.classList.remove('hidden');
+                    setTimeout(() => {
+                        speech.classList.add('hidden');
+                    }, 3000);
+                }
+                
+                // 重置动画
+                setTimeout(() => {
+                    bunny.style.animation = 'bunnyMagicalFloat 6s ease-in-out infinite';
+                    book.style.animation = 'bookMagicalFloat 4s ease-in-out infinite';
+                }, 500);
+            });
+            
+            // 点击书本的特殊效果
+            book.addEventListener('click', () => {
+                // 书本点击旋转效果
+                book.style.animation = 'bookExcitedMagic 0.6s ease-in-out infinite';
+                
+                // 兔子也会跟着兴奋
+                bunny.style.animation = 'bunnyExcitedDance 0.8s ease-out infinite';
+                
+                // 显示提示
+                showToast('📚 书本被点击了！兔子也很兴奋！', 'success');
+                
+                // 重置动画
+                setTimeout(() => {
+                    book.style.animation = 'bookMagicalFloat 4s ease-in-out infinite';
+                    bunny.style.animation = 'bunnyMagicalFloat 6s ease-in-out infinite';
+                }, 600);
+            });
+        }
+
         // 关闭设置
         function closeSettings() {
             document.getElementById('setupModal').classList.remove('active');
@@ -1387,6 +1459,9 @@
 
         // 初始化
         calculateDays();
+        
+        // 初始化兔子和书本的互动效果
+        initBunnyBookInteraction();
         
         // 检查是否需要显示设置
         const config = localStorage.getItem('jsonbin_config');
