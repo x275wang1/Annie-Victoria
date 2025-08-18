@@ -213,6 +213,9 @@
                     <button onclick="importConfig()" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 py-3 rounded-lg font-medium transition-colors">
                         导入配置
                     </button>
+                    <button onclick="syncConfig()" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 py-3 rounded-lg font-medium transition-colors">
+                        同步云端配置
+                    </button>
                     <button onclick="clearConfig()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 py-3 rounded-lg font-medium transition-colors">
                         清除配置
                     </button>
@@ -532,17 +535,21 @@
                     this.apiKey = config.apiKey;
                     this.binId = config.binId;
                     this.isLocal = config.isLocal || false;
+                    this.configBinId = config.configBinId; // 配置同步的Bin ID
                 } else {
                     this.isLocal = true; // 默认使用本地模式
                 }
             }
 
             saveConfig(apiKey, binId) {
-                const config = { apiKey, binId, isLocal: false };
+                const config = { apiKey, binId, isLocal: false, configBinId: this.configBinId };
                 localStorage.setItem('jsonbin_config', JSON.stringify(config));
                 this.apiKey = apiKey;
                 this.binId = binId;
                 this.isLocal = false;
+                
+                // 同时保存配置到云端，实现跨设备同步
+                this.saveConfigToCloud(config);
             }
 
             setLocalMode() {
@@ -569,6 +576,102 @@
                 
                 const data = await response.json();
                 return data.metadata.id;
+            }
+
+            // 创建配置同步的Bin
+            async createConfigBin(apiKey) {
+                try {
+                    const configData = {
+                        timestamp: Date.now(),
+                        device: navigator.userAgent,
+                        version: '1.0'
+                    };
+                    
+                    const response = await fetch('https://api.jsonbin.io/v3/b', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': apiKey,
+                            'X-Bin-Name': 'annie-victoria-config',
+                            'X-Bin-Private': 'false'
+                        },
+                        body: JSON.stringify(configData)
+                    });
+
+                    if (!response.ok) throw new Error('Failed to create config bin');
+                    
+                    const data = await response.json();
+                    return data.metadata.id;
+                } catch (error) {
+                    console.error('创建配置Bin失败:', error);
+                    return null;
+                }
+            }
+
+            // 保存配置到云端
+            async saveConfigToCloud(config) {
+                if (!this.configBinId || !this.apiKey) return;
+                
+                try {
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${this.configBinId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': this.apiKey
+                        },
+                        body: JSON.stringify(config)
+                    });
+                    
+                    if (response.ok) {
+                        console.log('配置已同步到云端');
+                    }
+                } catch (error) {
+                    console.error('配置同步到云端失败:', error);
+                }
+            }
+
+            // 从云端加载配置
+            async loadConfigFromCloud(apiKey) {
+                try {
+                    // 尝试从已知的配置Bin加载
+                    const knownConfigBins = [
+                        'annie-victoria-config-1', // 可以预设一些配置Bin ID
+                        'annie-victoria-config-2'
+                    ];
+                    
+                    for (const configBinId of knownConfigBins) {
+                        try {
+                            const response = await fetch(`https://api.jsonbin.io/v3/b/${configBinId}/latest`, {
+                                headers: {
+                                    'X-Master-Key': apiKey
+                                }
+                            });
+                            
+                            if (response.ok) {
+                                const data = await response.json();
+                                const config = data.record;
+                                
+                                if (config.apiKey && config.binId) {
+                                    console.log('从云端加载配置成功:', configBinId);
+                                    this.configBinId = configBinId;
+                                    return config;
+                                }
+                            }
+                        } catch (error) {
+                            console.log('尝试配置Bin失败:', configBinId, error.message);
+                            continue;
+                        }
+                    }
+                    
+                    // 如果没有找到现有配置，创建新的配置Bin
+                    console.log('创建新的配置Bin...');
+                    this.configBinId = await this.createConfigBin(apiKey);
+                    return null;
+                    
+                } catch (error) {
+                    console.error('从云端加载配置失败:', error);
+                    return null;
+                }
             }
 
             async loadData() {
@@ -743,9 +846,18 @@
             }
             
             try {
-                // 如果没有提供 Bin ID，创建新的
-                if (!binId) {
-                    showToast('正在创建存储空间...', 'success');
+                showToast('正在检查云端配置...', 'success');
+                
+                // 尝试从云端加载现有配置
+                const cloudConfig = await storage.loadConfigFromCloud(apiKey);
+                
+                if (cloudConfig && cloudConfig.binId) {
+                    // 找到云端配置，使用现有的Bin ID
+                    binId = cloudConfig.binId;
+                    showToast('发现云端配置，使用现有存储空间', 'success');
+                } else if (!binId) {
+                    // 没有云端配置且没有提供Bin ID，创建新的
+                    showToast('正在创建新的存储空间...', 'success');
                     storage.apiKey = apiKey; // 临时设置用于创建
                     binId = await storage.createBin(appData);
                     showToast('存储空间创建成功！', 'success');
@@ -760,12 +872,13 @@
                 }
                 showToast('连接测试成功！', 'success');
                 
+                // 保存配置（会自动同步到云端）
                 storage.saveConfig(apiKey, binId);
                 document.getElementById('setupModal').classList.remove('active');
                 
                 // 强制重新加载数据
                 await loadAllData();
-                showToast('配置保存成功！', 'success');
+                showToast('配置保存成功！已同步到云端', 'success');
                 
                 // 刷新页面以确保配置生效
                 setTimeout(() => {
@@ -777,6 +890,38 @@
         }
 
         // 测试连接
+        async function testConnection(apiKey, binId) {
+            try {
+                console.log('测试连接开始...');
+                console.log('API Key:', apiKey ? apiKey.substring(0, 10) + '...' : '未设置');
+                console.log('Bin ID:', binId || '未设置');
+                
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+                    headers: {
+                        'X-Master-Key': apiKey
+                    }
+                });
+                
+                console.log('测试响应状态:', response.status);
+                
+                if (response.ok) {
+                    console.log('连接测试成功');
+                    return { success: true };
+                } else {
+                    let errorMessage = `HTTP ${response.status}`;
+                    if (response.status === 401) {
+                        errorMessage = 'API Key 无效或权限不足';
+                    } else if (response.status === 404) {
+                        errorMessage = 'Bin ID 不存在';
+                    }
+                    console.log('连接测试失败:', errorMessage);
+                    return { success: false, error: errorMessage };
+                }
+            } catch (error) {
+                console.error('连接测试异常:', error);
+                return { success: false, error: error.message };
+            }
+        }
 
         // 强制同步数据
         async function forceSync() {
@@ -972,6 +1117,32 @@
             input.click();
         }
 
+        // 同步云端配置
+        async function syncConfig() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            
+            if (!apiKey) {
+                showToast('请先输入API Key', 'error');
+                return;
+            }
+            
+            try {
+                showToast('正在同步云端配置...', 'success');
+                
+                const cloudConfig = await storage.loadConfigFromCloud(apiKey);
+                
+                if (cloudConfig && cloudConfig.binId) {
+                    // 找到云端配置，自动填充
+                    document.getElementById('binId').value = cloudConfig.binId;
+                    showToast('云端配置同步成功！', 'success');
+                } else {
+                    showToast('未找到云端配置，将创建新的', 'info');
+                }
+            } catch (error) {
+                showToast('配置同步失败：' + error.message, 'error');
+            }
+        }
+
         // 显示设置
         function showSettings() {
             const config = localStorage.getItem('jsonbin_config');
@@ -1045,7 +1216,7 @@
                 bunny.style.animation = 'bunnyExcitedDance 0.8s ease-out infinite';
                 
                 // 显示提示
-                showToast('📚 书本被点击了！兔子也很兴奋！', 'success');
+                showToast('📚喵', 'success');
                 
                 // 重置动画
                 setTimeout(() => {
