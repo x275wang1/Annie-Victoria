@@ -202,6 +202,9 @@
                     <button onclick="testCurrentConnection()" class="w-full bg-yellow-100 hover:bg-yellow-200 text-yellow-700 py-3 rounded-lg font-medium transition-colors">
                         测试当前连接
                     </button>
+                    <button onclick="createTestData()" class="w-full bg-orange-100 hover:bg-orange-200 text-orange-700 py-3 rounded-lg font-medium transition-colors">
+                        创建测试数据
+                    </button>
                     <button onclick="exportConfig()" class="w-full bg-green-100 hover:bg-green-200 text-green-700 py-3 rounded-lg font-medium transition-colors">
                         导出配置
                     </button>
@@ -822,7 +825,84 @@
                 }
             } catch (error) {
                 console.error('测试连接失败:', error);
-                showToast('测试失败：' + error.message, 'error');
+                console.error('测试失败：' + error.message, 'error');
+            }
+        }
+
+        // 创建测试数据
+        async function createTestData() {
+            try {
+                showToast('正在创建测试数据...', 'success');
+                
+                if (storage.isLocal) {
+                    showToast('当前使用本地模式，无法创建测试数据', 'error');
+                    return;
+                }
+                
+                if (!storage.apiKey || !storage.binId) {
+                    showToast('请先配置API Key和Bin ID', 'error');
+                    return;
+                }
+                
+                // 创建测试数据
+                const testData = {
+                    memories: [
+                        {
+                            id: 'test-memory-1',
+                            title: '测试照片',
+                            date: new Date().toISOString().split('T')[0],
+                            desc: '这是一张测试照片',
+                            photo: 'https://via.placeholder.com/400x300/6366f1/ffffff?text=Test+Photo',
+                            uploader: 'Victoria',
+                            timestamp: new Date().toISOString()
+                        }
+                    ],
+                    diaries: [
+                        {
+                            id: 'test-diary-1',
+                            title: '测试日记',
+                            author: 'Annie',
+                            category: '测试',
+                            content: '这是一篇测试日记，用来验证数据同步功能。',
+                            timestamp: new Date().toISOString()
+                        }
+                    ],
+                    todos: [
+                        {
+                            id: 'test-todo-1',
+                            task: '测试待办事项',
+                            creator: 'Victoria',
+                            deadline: new Date().toISOString().split('T')[0],
+                            notes: '这是一个测试待办事项',
+                            completed: false,
+                            timestamp: new Date().toISOString()
+                        }
+                    ],
+                    messages: [
+                        {
+                            id: 'test-message-1',
+                            sender: 'Victoria',
+                            message: '测试消息：数据同步功能正常！',
+                            timestamp: new Date().toISOString()
+                        }
+                    ]
+                };
+                
+                // 保存测试数据
+                await storage.saveData(testData);
+                showToast('测试数据创建成功！', 'success');
+                
+                // 重新加载数据
+                await loadAllData();
+                
+                // 刷新页面显示
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('创建测试数据失败:', error);
+                showToast('创建失败：' + error.message, 'error');
             }
         }
 
