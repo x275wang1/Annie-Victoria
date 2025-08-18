@@ -92,7 +92,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: none;
-            z-index: 9999;
+            z-index: 10001;
         }
 
         .toast.show {
@@ -925,7 +925,14 @@
 
         // 强制同步数据
         async function forceSync() {
+            const btn = document.querySelector('button[onclick="forceSync()"]');
+            const prevHtml = btn ? btn.innerHTML : '';
             try {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-60','cursor-not-allowed');
+                    btn.innerHTML = '<span class="loading mr-2"></span>正在强制同步...';
+                }
                 showToast('正在强制同步数据...', 'success');
                 
                 // 显示调试信息
@@ -955,10 +962,16 @@
                 setTimeout(() => {
                     console.log('准备刷新页面...');
                     window.location.reload();
-                }, 2000);
+                }, 1200);
             } catch (error) {
                 console.error('强制同步失败:', error);
                 showToast('同步失败：' + error.message, 'error');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-60','cursor-not-allowed');
+                    btn.innerHTML = prevHtml;
+                }
             }
         }
 
@@ -1216,7 +1229,7 @@
                 bunny.style.animation = 'bunnyExcitedDance 0.8s ease-out infinite';
                 
                 // 显示提示
-                showToast('📚喵', 'success');
+                showToast('喵～', 'success');
                 
                 // 重置动画
                 setTimeout(() => {
@@ -1253,6 +1266,19 @@
             } catch (error) {
                 console.error('Error saving data:', error);
                 showToast('保存失败，数据已保存到本地', 'error');
+            }
+        }
+
+        // 统一渲染函数（修复初始化时调用未定义函数的问题）
+        function renderAllData() {
+            try {
+                renderMemories();
+                renderDiaries();
+                renderTodos();
+                renderMessages();
+            } catch (e) {
+                console.error('渲染数据时出错:', e);
+                showToast('渲染失败', 'error');
             }
         }
 
