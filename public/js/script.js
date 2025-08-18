@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
     
     // 兔子说话功能
-    const bunny = document.getElementById('talkingBunny');
-    const bunnySpeech = document.getElementById('bunnySpeech');
+    const bunny = document.getElementById('bunny');
+    const bunnySpeech = document.getElementById('bunny-speech');
     
     if (bunny && bunnySpeech) {
         // 鼠标悬停时随机显示一句话

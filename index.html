@@ -1,20 +1,126 @@
-<html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>annie&amp;victoria</title>
+    <title>annie&victoria</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 预加载字体 */
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2') format('woff2');
+        }
+        
+        /* 兔子图片固定大小 */
+        .bunny-image {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+        }
+        
+        /* 页脚云朵样式 */
+        .page-footer {
+            position: relative;
+            height: 150px;
+            margin-top: 50px;
+        }
+        
+        .footer-cloud {
+            position: absolute;
+            left: 20px;
+            bottom: 0;
+            width: 200px;
+            height: auto;
+            opacity: 0.8;
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #6366f1;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 设置弹窗 */
+        .setup-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .setup-modal.active {
+            display: flex;
+        }
+
+        /* 提示消息 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 9999;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        .toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translate(-50%, 100%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+    </style>
     <script>
         // 配置Tailwind自定义颜色和字体
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#6366f1', // 靛蓝色
-                        secondary: '#8b5cf6', // 紫色
-                        victoria: '#3b82f6', // 蓝色
-                        annie: '#10b981'    // 绿色
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        victoria: '#3b82f6',
+                        annie: '#10b981'
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif']
@@ -47,70 +153,73 @@
             }
         }
     </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.-bottom-3{bottom:-0.75rem}.-bottom-5{bottom:-1.25rem}.-left-48{left:-12rem}.-top-24{top:-6rem}.bottom-4{bottom:1rem}.left-10{left:2.5rem}.right-4{right:1rem}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-12{margin-bottom:3rem}.mb-2{margin-bottom:0.5rem}.mb-20{margin-bottom:5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mr-4{margin-right:1rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-0{height:0px}.h-1{height:0.25rem}.h-10{height:2.5rem}.h-96{height:24rem}.h-auto{height:auto}.min-h-screen{min-height:100vh}.w-0{width:0px}.w-10{width:2.5rem}.w-12{width:3rem}.w-24{width:6rem}.w-6{width:1.5rem}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-\[180px\]{max-width:180px}.flex-grow{flex-grow:1}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-4{gap:1rem}.gap-8{gap:2rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-6 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1.5rem * var(--tw-space-x-reverse));margin-left:calc(1.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded-l-lg{border-top-left-radius:0.5rem;border-bottom-left-radius:0.5rem}.rounded-r-lg{border-top-right-radius:0.5rem;border-bottom-right-radius:0.5rem}.border{border-width:1px}.border-2{border-width:2px}.border-4{border-width:4px}.border-b{border-bottom-width:1px}.border-l-8{border-left-width:8px}.border-r-8{border-right-width:8px}.border-t{border-top-width:1px}.border-t-8{border-top-width:8px}.border-blue-200{--tw-border-opacity:1;border-color:rgb(191 219 254 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-indigo-200{--tw-border-opacity:1;border-color:rgb(199 210 254 / var(--tw-border-opacity, 1))}.border-l-transparent{border-left-color:transparent}.border-r-transparent{border-right-color:transparent}.border-t-blue-200{--tw-border-opacity:1;border-top-color:rgb(191 219 254 / var(--tw-border-opacity, 1))}.border-t-white{--tw-border-opacity:1;border-top-color:rgb(255 255 255 / var(--tw-border-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-primary{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255 / var(--tw-bg-opacity, 1))}.bg-secondary{--tw-bg-opacity:1;background-color:rgb(139 92 246 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/90{background-color:rgb(255 255 255 / 0.9)}.bg-\[url\(\'data\:image\/svg\+xml\;base64\2c PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48ZmlsdGVyIGlkPSJub2lzZSI\+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giIHJlc3VsdD0ibm9pc2UiLz48ZmVDb2xvck1hdHJpeCB0eXBlPSJzYXR1cmF0ZSIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMC4yIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAuMSAwIiByZXN1bHQ9ImNvbG9yTWF0cml4Ii8\+PC9maWx0ZXI\+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg\=\=\'\)\]{background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giIHJlc3VsdD0ibm9pc2UiLz48ZmVDb2xvck1hdHJpeCB0eXBlPSJzYXR1cmF0ZSIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMC4yIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAuMSAwIiByZXN1bHQ9ImNvbG9yTWF0cml4Ii8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-100{--tw-gradient-from:#dbeafe var(--tw-gradient-from-position);--tw-gradient-to:rgb(219 234 254 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-500{--tw-gradient-from:#6366f1 var(--tw-gradient-from-position);--tw-gradient-to:rgb(99 102 241 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-600{--tw-gradient-from:#4f46e5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(79 70 229 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-500{--tw-gradient-from:#a855f7 var(--tw-gradient-from-position);--tw-gradient-to:rgb(168 85 247 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-slate-50{--tw-gradient-from:#f8fafc var(--tw-gradient-from-position);--tw-gradient-to:rgb(248 250 252 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-blue-50{--tw-gradient-to:rgb(239 246 255 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #eff6ff var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-indigo-50{--tw-gradient-to:rgb(238 242 255 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #eef2ff var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-indigo-100{--tw-gradient-to:#e0e7ff var(--tw-gradient-to-position)}.to-indigo-500{--tw-gradient-to:#6366f1 var(--tw-gradient-to-position)}.to-purple-100{--tw-gradient-to:#f3e8ff var(--tw-gradient-to-position)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.to-purple-600{--tw-gradient-to:#9333ea var(--tw-gradient-to-position)}.bg-clip-text{-webkit-background-clip:text;background-clip:text}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-16{padding-bottom:4rem}.pt-24{padding-top:6rem}.text-center{text-align:center}.font-sans{font-family:Inter, system-ui, sans-serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-5xl{font-size:3rem;line-height:1}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.text-primary{--tw-text-opacity:1;color:rgb(99 102 241 / var(--tw-text-opacity, 1))}.text-secondary{--tw-text-opacity:1;color:rgb(139 92 246 / var(--tw-text-opacity, 1))}.text-transparent{color:transparent}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.opacity-50{opacity:0.5}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.text-shadow {
-                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-            }.bunny-talk {
-                animation: pop 0.3s ease-out;
-            }@keyframes pop {
-                0% { transform: scale(0.8); opacity: 0; }
-                100% { transform: scale(1); opacity: 1; }
-            }
-        .hover\:-translate-y-1:hover{--tw-translate-y:-0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
-        .hover\:scale-110:hover{--tw-scale-x:1.1;--tw-scale-y:1.1;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
-        .hover\:bg-blue-100:hover{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}
-        .hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}
-        .hover\:bg-primary\/90:hover{background-color:rgb(99 102 241 / 0.9)}
-        .hover\:bg-purple-100:hover{--tw-bg-opacity:1;background-color:rgb(243 232 255 / var(--tw-bg-opacity, 1))}
-        .hover\:from-indigo-600:hover{--tw-gradient-from:#4f46e5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(79 70 229 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}
-        .hover\:from-purple-600:hover{--tw-gradient-from:#9333ea var(--tw-gradient-from-position);--tw-gradient-to:rgb(147 51 234 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}
-        .hover\:to-indigo-600:hover{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}
-        .hover\:to-purple-600:hover{--tw-gradient-to:#9333ea var(--tw-gradient-to-position)}
-        .hover\:text-primary:hover{--tw-text-opacity:1;color:rgb(99 102 241 / var(--tw-text-opacity, 1))}
-        .hover\:shadow-lg:hover{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}
-        .hover\:shadow-xl:hover{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}
-        .focus\:border-primary:focus{--tw-border-opacity:1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}
-        .focus\:border-transparent:focus{border-color:transparent}
-        .focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
-        .focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}
-        .focus\:ring-primary:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(99 102 241 / var(--tw-ring-opacity, 1))}
-        @media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}}
-        @media (min-width: 768px){.md\:block{display:block}.md\:flex{display:flex}.md\:hidden{display:none}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:pb-24{padding-bottom:6rem}.md\:pt-32{padding-top:8rem}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\:text-6xl{font-size:3.75rem;line-height:1}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}}
-        @media (min-width: 1024px){.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:col-span-3{grid-column:span 3 / span 3}.lg\:col-span-4{grid-column:span 4 / span 4}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.lg\:grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}}
-    </style></head>
+</head>
 <body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen font-sans text-gray-800">
-    <!-- 会说话的兔子 -->
-    <div id="bunny" class="fixed right-4 bottom-4 z-50 cursor-pointer transition-all duration-300 transform hover:scale-110">
-        <!-- 兔子图片 -->
-        <div class="relative">
-            <img src="/images/penny.png" alt="可爱的小兔子" class="w-24 h-auto rounded-full border-4 border-blue-200 shadow-lg">
+    
+    <!-- Toast 提示 -->
+    <div id="toast" class="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- 初始化设置弹窗 -->
+    <div id="setupModal" class="setup-modal">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">🔐 配置 JSONBin</h2>
+            <p class="text-gray-600 mb-6">首次使用需要配置 JSONBin.io</p>
             
-            <!-- 兔子对话框 -->
-            <div id="bunny-speech" class="hidden absolute -top-24 -left-48 bg-white rounded-2xl p-3 shadow-lg border-2 border-blue-200 bunny-talk max-w-[180px]">
-                <p id="bunny-text" class="text-sm">你们好呀！😊</p>
-                <!-- 对话框小三角 -->
-                <div class="absolute -bottom-3 left-10 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white"></div>
-                <div class="absolute -bottom-5 left-10 w-0 h-0 border-l-10 border-r-10 border-t-10 border-l-transparent border-r-transparent border-t-blue-200"></div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">API Key (Master Key)</label>
+                    <input type="password" id="apiKey" placeholder="$2b$10..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                    <p class="text-xs text-gray-500 mt-1">
+                        <a href="https://jsonbin.io/app/api-keys" target="_blank" class="text-primary hover:underline">获取 API Key →</a>
+                    </p>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Bin ID</label>
+                    <input type="text" id="binId" placeholder="例如：6580..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                    <p class="text-xs text-gray-500 mt-1">如果没有，留空会自动创建</p>
+                </div>
+                
+                <div class="pt-4 space-y-2">
+                    <button onclick="saveConfig()" class="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg font-medium transition-colors">
+                        保存配置
+                    </button>
+                    <button onclick="useLocalMode()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-lg font-medium transition-colors">
+                        使用本地模式（数据不同步）
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <h3 class="font-bold text-sm mb-2">📝 使用说明：</h3>
+                <ol class="text-xs text-gray-600 space-y-1">
+                    <li>1. 注册 <a href="https://jsonbin.io" target="_blank" class="text-primary hover:underline">JSONBin.io</a> 账号</li>
+                    <li>2. 获取 API Key (Master Key)</li>
+                    <li>3. 可选：创建一个 Bin，或留空自动创建</li>
+                    <li>4. 保存配置即可开始使用</li>
+                </ol>
             </div>
         </div>
     </div>
 
+
+
     <!-- 导航栏 -->
-    <nav id="navbar" class="fixed w-full bg-white/90 backdrop-blur-md shadow-sm z-40 transition-all duration-300 py-3">
+    <nav id="navbar" class="fixed w-full bg-white/90 backdrop-blur-md shadow-sm z-40 transition-all duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2">
                 <i class="fa fa-heart text-primary text-2xl animate-pulse"></i>
                 <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    annie&amp;victoria
+                    annie&victoria
                 </h1>
             </div>
             
-            <!-- 相识天数 -->
             <div class="hidden md:block bg-blue-50 px-4 py-1 rounded-full text-sm font-medium">
                 <i class="fa fa-calendar-check-o text-primary mr-1"></i>
-                认识 <span class="text-primary font-bold">1598</span> 天啦
+                认识 <span id="days-count" class="text-primary font-bold">0</span> 天啦
             </div>
             
-            <!-- 桌面导航 -->
             <div class="hidden md:flex space-x-6">
                 <a href="#memories" class="hover:text-primary transition-colors duration-300 flex items-center">
                     <i class="fa fa-camera-retro mr-1"></i> 记忆墙
@@ -124,20 +233,21 @@
                 <a href="#messages" class="hover:text-primary transition-colors duration-300 flex items-center">
                     <i class="fa fa-envelope mr-1"></i> 悄悄话
                 </a>
+                <button onclick="showSettings()" class="text-gray-500 hover:text-primary transition-colors" title="设置">
+                    <i class="fa fa-cog"></i>
+                </button>
             </div>
             
-            <!-- 移动端菜单按钮 -->
             <button id="menuBtn" class="md:hidden text-gray-700 hover:text-primary transition-colors">
                 <i class="fa fa-bars text-xl"></i>
             </button>
         </div>
         
-        <!-- 移动端导航菜单 -->
         <div id="mobileMenu" class="md:hidden hidden bg-white border-t">
             <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
                 <div class="py-2 text-center bg-blue-50 rounded-lg">
                     <i class="fa fa-calendar-check-o text-primary mr-1"></i>
-                    认识 <span class="text-primary font-bold">1598</span> 天啦
+                    认识 <span id="days-count-mobile" class="text-primary font-bold">0</span> 天啦
                 </div>
                 <a href="#memories" class="py-2 hover:text-primary transition-colors duration-300 flex items-center">
                     <i class="fa fa-camera-retro mr-2 w-6"></i> 记忆墙
@@ -151,18 +261,28 @@
                 <a href="#messages" class="py-2 hover:text-primary transition-colors duration-300 flex items-center">
                     <i class="fa fa-envelope mr-2 w-6"></i> 悄悄话
                 </a>
+                <button onclick="showSettings()" class="py-2 hover:text-primary transition-colors duration-300 flex items-center">
+                    <i class="fa fa-cog mr-2 w-6"></i> 设置
+                </button>
             </div>
         </div>
     </nav>
 
+
+
     <!-- 英雄区域 -->
     <header class="pt-24 pb-16 md:pt-32 md:pb-24 px-4 bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-100 relative overflow-hidden">
-        <!-- 背景装饰 -->
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giIHJlc3VsdD0ibm9pc2UiLz48ZmVDb2xvck1hdHJpeCB0eXBlPSJzYXR1cmF0ZSIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMC4yIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAuMSAwIiByZXN1bHQ9ImNvbG9yTWF0cml4Ii8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-50"></div>
         <div class="container mx-auto text-center">
             <h1 class="text-4xl md:text-6xl font-bold text-shadow mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 我们的小窝
             </h1>
+            
+            <!-- 添加跳动的book图片和星星 -->
+            <div class="my-6 flex justify-center items-center relative">
+                <img src="images/星星.png" alt="星星" class="absolute w-[550px] h-[550px] object-contain animate-pulse z-0 opacity-60">
+                <img src="images/book.png" alt="book" class="relative z-10 w-[432px] h-[432px] md:w-[432px] md:h-[432px] object-contain gentle-bounce">
+            </div>
+            
             <p class="text-xl md:text-2xl text-gray-600 mb-2">
                 诶，你竟然发现了这个网站呀！
             </p>
@@ -183,38 +303,38 @@
 
     <main class="container mx-auto px-4 py-12">
         <!-- 记忆墙部分 -->
-        <section id="memories" class="mb-20 animate-on-scroll">
+        <section id="memories" class="mb-20">
             <div class="flex items-center mb-8">
                 <div class="w-12 h-1 bg-primary rounded-full mr-4"></div>
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-800">我们的记忆墙</h2>
             </div>
             
-            <!-- 添加照片表单 -->
-            <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 transform transition-all hover:-translate-y-1 hover:shadow-xl">
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
                 <h3 class="text-xl font-bold mb-4 text-gray-800">添加新照片</h3>
-                <form action="/memories" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <form id="memoryForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="lg:col-span-4">
                         <label class="block text-gray-700 mb-2" for="photoFile">选择照片</label>
-                        <input type="file" id="photoFile" name="photo" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required="">
+                        <input type="file" id="photoFile" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required>
+                        <p class="text-xs text-gray-500 mt-1">图片会被压缩以节省空间</p>
                     </div>
                     <div>
                         <label class="block text-gray-700 mb-2" for="photoTitle">照片标题</label>
-                        <input type="text" id="photoTitle" name="title" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="例如：一起看电影" required="">
+                        <input type="text" id="photoTitle" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="例如：一起看电影" required>
                     </div>
                     <div>
                         <label class="block text-gray-700 mb-2" for="photoDate">日期</label>
-                        <input type="date" id="photoDate" name="date" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required="">
+                        <input type="date" id="photoDate" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required>
                     </div>
                     <div>
                         <label class="block text-gray-700 mb-2" for="photoUploader">上传人</label>
-                        <select id="photoUploader" name="uploader" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required="">
+                        <select id="photoUploader" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required>
                             <option value="Victoria">Victoria</option>
                             <option value="Annie">Annie</option>
                         </select>
                     </div>
                     <div class="lg:col-span-4">
                         <label class="block text-gray-700 mb-2" for="photoDescription">描述</label>
-                        <textarea id="photoDescription" name="desc" rows="2" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="写下关于这张照片的回忆..."></textarea>
+                        <textarea id="photoDescription" rows="2" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="写下关于这张照片的回忆..."></textarea>
                     </div>
                     <div class="lg:col-span-4">
                         <button type="submit" class="bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
@@ -224,57 +344,37 @@
                 </form>
             </div>
             
-            <!-- 照片列表 -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-            </div>
-            
-            
-            <div class="text-center py-12 bg-white rounded-xl shadow-sm">
-                <i class="fa fa-camera text-gray-300 text-5xl mb-4"></i>
-                <p class="text-gray-500">还没有照片呢，上传第一张回忆吧！</p>
-            </div>
-            
+            <div id="memoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
         </section>
         
         <!-- 日记本部分 -->
-        <section id="diary" class="mb-20 animate-on-scroll">
+        <section id="diary" class="mb-20">
             <div class="flex items-center mb-8">
                 <div class="w-12 h-1 bg-secondary rounded-full mr-4"></div>
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-800">我们的日记本</h2>
+                <img src="images/看书.png" alt="看书" class="ml-4 w-24 h-24 object-contain animate-bounce hover:animate-spin transition-all duration-500 hover:scale-110">
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- 日记列表 -->
-                <div class="lg:col-span-2 space-y-6">
-                    
-                    
-                    
-                    <div class="text-center py-12 bg-white rounded-xl shadow-sm">
-                        <i class="fa fa-book text-gray-300 text-5xl mb-4"></i>
-                        <p class="text-gray-500">日记本还是空的，写下第一篇日记吧！</p>
-                    </div>
-                    
-                </div>
+                <div id="diariesList" class="lg:col-span-2 space-y-6"></div>
                 
-                <!-- 写日记区域 -->
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <h3 class="text-xl font-bold mb-4 text-gray-800">写点什么吧</h3>
-                    <form action="/diaries" method="POST" class="space-y-4">
+                    <form id="diaryForm" class="space-y-4">
                         <div>
                             <label class="block text-gray-700 mb-2" for="diaryTitle">标题</label>
-                            <input type="text" id="diaryTitle" name="title" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="给这篇日记起个标题" required="">
+                            <input type="text" id="diaryTitle" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="给这篇日记起个标题" required>
                         </div>
                         <div>
                             <label class="block text-gray-700 mb-2" for="diaryAuthor">作者</label>
-                            <select id="diaryAuthor" name="author" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required="">
+                            <select id="diaryAuthor" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required>
                                 <option value="Victoria">Victoria</option>
                                 <option value="Annie">Annie</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-gray-700 mb-2" for="diaryCategory">分类</label>
-                            <select id="diaryCategory" name="category" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                            <select id="diaryCategory" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
                                 <option value="日常">日常</option>
                                 <option value="心情">心情</option>
                                 <option value="分享">分享</option>
@@ -283,7 +383,7 @@
                         </div>
                         <div>
                             <label class="block text-gray-700 mb-2" for="diaryContent">内容</label>
-                            <textarea id="diaryContent" name="content" rows="5" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="把想对她说的话写在这里..." required=""></textarea>
+                            <textarea id="diaryContent" rows="5" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="把想对她说的话写在这里..." required></textarea>
                         </div>
                         <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                             <i class="fa fa-pencil mr-2"></i> 发布日记
@@ -294,15 +394,14 @@
         </section>
         
         <!-- 待办清单部分 -->
-        <section id="todo" class="mb-20 animate-on-scroll">
+        <section id="todo" class="mb-20">
             <div class="flex items-center mb-8">
                 <div class="w-12 h-1 bg-primary rounded-full mr-4"></div>
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-800">我们的待办清单</h2>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                <!-- 待办列表 -->
-                <div class="lg:col-span-3 bg-white rounded-2xl shadow-md p-6 transform transition-all hover:shadow-lg">
+                <div class="lg:col-span-3 bg-white rounded-2xl shadow-md p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xl font-bold text-gray-800">一起要做的事情</h3>
                         <div class="flex space-x-2">
@@ -312,40 +411,30 @@
                         </div>
                     </div>
                     
-                    <div class="space-y-4">
-                        
-                    </div>
-                    
-                    
-                    <div class="text-center py-12">
-                        <i class="fa fa-list text-gray-300 text-5xl mb-4"></i>
-                        <p class="text-gray-500">还没有计划呢，添加一个一起完成的事情吧！</p>
-                    </div>
-                    
+                    <div id="todosList" class="space-y-4"></div>
                 </div>
                 
-                <!-- 添加待办项 -->
-                <div class="lg:col-span-2 bg-white rounded-2xl shadow-md p-6 transform transition-all hover:shadow-lg">
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-md p-6">
                     <h3 class="text-xl font-bold mb-4 text-gray-800">添加新计划</h3>
-                    <form action="/todos" method="POST" class="space-y-4">
+                    <form id="todoForm" class="space-y-4">
                         <div>
                             <label class="block text-gray-700 mb-2" for="todoItem">计划内容</label>
-                            <input type="text" id="todoItem" name="task" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="例如：一起去游乐园" required="">
+                            <input type="text" id="todoItem" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="例如：一起去游乐园" required>
                         </div>
                         <div>
                             <label class="block text-gray-700 mb-2" for="todoCreator">创建人</label>
-                            <select id="todoCreator" name="creator" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required="">
+                            <select id="todoCreator" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required>
                                 <option value="Victoria">Victoria</option>
                                 <option value="Annie">Annie</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-gray-700 mb-2" for="todoDate">计划时间</label>
-                            <input type="date" id="todoDate" name="deadline" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required="">
+                            <input type="date" id="todoDate" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" required>
                         </div>
                         <div>
                             <label class="block text-gray-700 mb-2" for="todoNotes">备注</label>
-                            <textarea id="todoNotes" name="notes" rows="3" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="写下关于这个计划的想法..."></textarea>
+                            <textarea id="todoNotes" rows="3" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="写下关于这个计划的想法..."></textarea>
                         </div>
                         <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                             <i class="fa fa-plus mr-2"></i> 添加到清单
@@ -356,33 +445,22 @@
         </section>
         
         <!-- 悄悄话部分 -->
-        <section id="messages" class="mb-12 animate-on-scroll">
+        <section id="messages" class="mb-12">
             <div class="flex items-center mb-8">
                 <div class="w-12 h-1 bg-secondary rounded-full mr-4"></div>
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-800">我们的悄悄话</h2>
             </div>
             
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-                <!-- 消息区域 -->
-                <div id="messagesContainer" class="h-96 p-6 overflow-y-auto space-y-6">
-                    
-                    
-                    
-                    <div class="text-center py-16">
-                        <i class="fa fa-envelope text-gray-300 text-5xl mb-4"></i>
-                        <p class="text-gray-500">还没有悄悄话呢，给对方发一条吧！</p>
-                    </div>
-                    
-                </div>
+                <div id="messagesContainer" class="h-96 p-6 overflow-y-auto space-y-6"></div>
                 
-                <!-- 发送消息区域 -->
                 <div class="border-t p-4">
                     <form id="messageForm" class="flex">
-                        <select id="messageSender" name="sender" class="w-24 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <select id="messageSender" class="w-24 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
                             <option value="Victoria">Victoria</option>
                             <option value="Annie">Annie</option>
                         </select>
-                        <textarea id="messageInput" name="message" rows="2" class="flex-grow p-3 border-t border-b border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="输入想对她说的话..." required=""></textarea>
+                        <input type="text" id="messageInput" class="flex-grow p-3 border-t border-b border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="输入想对她说的话..." required>
                         <button type="submit" class="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white px-6 rounded-r-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                             <i class="fa fa-paper-plane"></i>
                         </button>
@@ -397,34 +475,595 @@
         <div class="container mx-auto px-4 text-center">
             <div class="flex justify-center items-center mb-4">
                 <i class="fa fa-heart text-primary text-2xl mr-2 animate-pulse"></i>
-                <h2 class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">annie&amp;victoria</h2>
+                <h2 class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">annie&victoria</h2>
             </div>
             <p class="text-gray-500 mb-6">记录每一个珍贵瞬间，创造更多美好回忆</p>
-            <div class="flex justify-center space-x-4 mb-6">
-                <a href="#memories" class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary hover:bg-blue-100 transition-colors duration-300">
-                    <i class="fa fa-camera"></i>
-                </a>
-                <a href="#diary" class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-secondary hover:bg-purple-100 transition-colors duration-300">
-                    <i class="fa fa-book"></i>
-                </a>
-                <a href="#todo" class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary hover:bg-blue-100 transition-colors duration-300">
-                    <i class="fa fa-list"></i>
-                </a>
-                <a href="#messages" class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-secondary hover:bg-purple-100 transition-colors duration-300">
-                    <i class="fa fa-envelope"></i>
-                </a>
-            </div>
-            <p class="text-gray-400 text-sm">© 2025 Victoria &amp; Annie 的小窝 | 认识 1598 天</p>
+            <p class="text-gray-400 text-sm">© 2024 Victoria & Annie 的小窝</p>
         </div>
     </footer>
 
+    <!-- 页面底部素材 -->
+    <div class="page-footer">
+        <img src="images/cloud-star.png" alt="可爱云朵和星星" class="footer-cloud" />
+        <!-- 会说话的兔子 -->
+        <div id="bunny" class="bunny">
+            <div class="relative">
+                <img src="images/penny.png" alt="可爱的小兔子" class="bunny-image rounded-full border-4 border-blue-200">
+                <div id="bunny-speech" class="hidden absolute -top-24 -left-48 bg-white rounded-2xl p-3 shadow-lg border-2 border-blue-200 bunny-talk max-w-[180px]">
+                    <p id="bunny-text" class="text-sm">你们好呀！😊</p>
+                    <div class="absolute -bottom-3 left-10 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white"></div>
+                    <div class="absolute -bottom-5 left-10 w-0 h-0 border-l-10 border-r-10 border-t-10 border-l-transparent border-r-transparent border-t-blue-200"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // JSONBin.io 配置管理
+        class JSONBinStorage {
+            constructor() {
+                this.loadConfig();
+            }
+
+            loadConfig() {
+                const saved = localStorage.getItem('jsonbin_config');
+                if (saved) {
+                    const config = JSON.parse(saved);
+                    this.apiKey = config.apiKey;
+                    this.binId = config.binId;
+                    this.isLocal = config.isLocal || false;
+                } else {
+                    this.isLocal = true; // 默认使用本地模式
+                }
+            }
+
+            saveConfig(apiKey, binId) {
+                const config = { apiKey, binId, isLocal: false };
+                localStorage.setItem('jsonbin_config', JSON.stringify(config));
+                this.apiKey = apiKey;
+                this.binId = binId;
+                this.isLocal = false;
+            }
+
+            setLocalMode() {
+                const config = { isLocal: true };
+                localStorage.setItem('jsonbin_config', JSON.stringify(config));
+                this.isLocal = true;
+            }
+
+            async createBin(initialData) {
+                if (!this.apiKey) throw new Error('API Key required');
+                
+                const response = await fetch('https://api.jsonbin.io/v3/b', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': this.apiKey,
+                        'X-Bin-Name': 'annie-victoria-data',
+                        'X-Bin-Private': 'false'
+                    },
+                    body: JSON.stringify(initialData)
+                });
+
+                if (!response.ok) throw new Error('Failed to create bin');
+                
+                const data = await response.json();
+                return data.metadata.id;
+            }
+
+            async loadData() {
+                if (this.isLocal) {
+                    return this.loadLocalData();
+                }
+
+                if (!this.apiKey || !this.binId) {
+                    throw new Error('Configuration required');
+                }
+
+                try {
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}/latest`, {
+                        headers: {
+                            'X-Master-Key': this.apiKey
+                        }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to load data');
+                    
+                    const data = await response.json();
+                    return data.record;
+                } catch (error) {
+                    console.error('Error loading from JSONBin:', error);
+                    // 回退到本地数据
+                    return this.loadLocalData();
+                }
+            }
+
+            async saveData(data) {
+                if (this.isLocal) {
+                    return this.saveLocalData(data);
+                }
+
+                if (!this.apiKey || !this.binId) {
+                    throw new Error('Configuration required');
+                }
+
+                try {
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': this.apiKey
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!response.ok) throw new Error('Failed to save data');
+                    
+                    // 同时保存到本地作为备份
+                    this.saveLocalData(data);
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Error saving to JSONBin:', error);
+                    // 保存到本地
+                    return this.saveLocalData(data);
+                }
+            }
+
+            loadLocalData() {
+                const data = localStorage.getItem('app_data');
+                return data ? JSON.parse(data) : {
+                    memories: [],
+                    diaries: [],
+                    todos: [],
+                    messages: []
+                };
+            }
+
+            saveLocalData(data) {
+                localStorage.setItem('app_data', JSON.stringify(data));
+                return true;
+            }
+        }
+
+        // 初始化存储
+        const storage = new JSONBinStorage();
+        let appData = {
+            memories: [],
+            diaries: [],
+            todos: [],
+            messages: []
+        };
+
+        // 压缩图片
+        function compressImage(file, maxWidth = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = (maxWidth / width) * height;
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        canvas.toBlob((blob) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(blob);
+                        }, 'image/jpeg', quality);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 显示提示消息
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toast.className = `toast show ${type}`;
+            toastMessage.textContent = message;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // 保存配置
+        async function saveConfig() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            let binId = document.getElementById('binId').value.trim();
+            
+            if (!apiKey) {
+                showToast('请输入 API Key', 'error');
+                return;
+            }
+            
+            try {
+                // 如果没有提供 Bin ID，创建新的
+                if (!binId) {
+                    showToast('正在创建存储空间...', 'success');
+                    storage.apiKey = apiKey; // 临时设置用于创建
+                    binId = await storage.createBin(appData);
+                    showToast('存储空间创建成功！', 'success');
+                }
+                
+                storage.saveConfig(apiKey, binId);
+                document.getElementById('setupModal').classList.remove('active');
+                
+                // 重新加载数据
+                await loadAllData();
+                showToast('配置保存成功！', 'success');
+            } catch (error) {
+                showToast('配置失败：' + error.message, 'error');
+            }
+        }
+
+        // 使用本地模式
+        function useLocalMode() {
+            storage.setLocalMode();
+            document.getElementById('setupModal').classList.remove('active');
+            loadAllData();
+            showToast('已切换到本地模式', 'success');
+        }
+
+        // 显示设置
+        function showSettings() {
+            const config = localStorage.getItem('jsonbin_config');
+            if (config) {
+                const parsed = JSON.parse(config);
+                document.getElementById('apiKey').value = parsed.apiKey || '';
+                document.getElementById('binId').value = parsed.binId || '';
+            }
+            document.getElementById('setupModal').classList.add('active');
+        }
+
+        // 加载所有数据
+        async function loadAllData() {
+            try {
+                appData = await storage.loadData();
+                renderMemories();
+                renderDiaries();
+                renderTodos();
+                renderMessages();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('加载数据失败', 'error');
+            }
+        }
+
+        // 保存所有数据
+        async function saveAllData() {
+            try {
+                await storage.saveData(appData);
+                showToast('数据保存成功', 'success');
+            } catch (error) {
+                console.error('Error saving data:', error);
+                showToast('保存失败，数据已保存到本地', 'error');
+            }
+        }
+
+        // 渲染记忆墙
+        function renderMemories() {
+            const grid = document.getElementById('memoriesGrid');
+            
+            if (appData.memories.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white rounded-xl shadow-sm">
+                        <i class="fa fa-camera text-gray-300 text-5xl mb-4"></i>
+                        <p class="text-gray-500">还没有照片呢，上传第一张回忆吧！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = appData.memories.map(memory => `
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden card-hover group relative">
+                    <button onclick="deleteMemory('${memory.id}')" class="absolute top-2 right-2 z-10 bg-white/80 hover:bg-white text-gray-500 hover:text-red-500 p-1 rounded-full shadow-md transition-colors">
+                        <i class="fa fa-trash-o"></i>
+                    </button>
+                    <div class="relative overflow-hidden">
+                        <img src="${memory.photo}" alt="${memory.title}" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                            <p class="text-white font-medium">${memory.title}</p>
+                            <p class="text-white/80 text-sm">${memory.date} · 由 ${memory.uploader} 上传</p>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600">${memory.desc || ''}</p>
+                        <div class="mt-3 text-xs text-gray-400">${new Date(memory.timestamp).toLocaleString()}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 渲染日记
+        function renderDiaries() {
+            const list = document.getElementById('diariesList');
+            
+            if (appData.diaries.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-12 bg-white rounded-xl shadow-sm">
+                        <i class="fa fa-book text-gray-300 text-5xl mb-4"></i>
+                        <p class="text-gray-500">日记本还是空的，写下第一篇日记吧！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = appData.diaries.map(diary => `
+                <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold ${diary.author === 'Victoria' ? 'text-victoria' : 'text-annie'}">${diary.title}</h3>
+                            <p class="text-gray-500 text-sm">${new Date(diary.timestamp).toLocaleString()} · 由 ${diary.author} 发布</p>
+                        </div>
+                        <span class="bg-blue-50 text-primary text-xs px-3 py-1 rounded-full">${diary.category}</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">${diary.content}</p>
+                    <button onclick="deleteDiary('${diary.id}')" class="text-gray-400 hover:text-red-500 text-sm">
+                        <i class="fa fa-trash-o mr-1"></i> 删除
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // 渲染待办事项
+        let currentTodoFilter = 'all';
+        
+        function renderTodos() {
+            const list = document.getElementById('todosList');
+            let todos = [...appData.todos];
+            
+            if (currentTodoFilter === 'active') {
+                todos = todos.filter(todo => !todo.completed);
+            } else if (currentTodoFilter === 'completed') {
+                todos = todos.filter(todo => todo.completed);
+            }
+            
+            if (todos.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fa fa-list text-gray-300 text-5xl mb-4"></i>
+                        <p class="text-gray-500">还没有计划呢，添加一个一起完成的事情吧！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = todos.map(todo => `
+                <div class="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors duration-200 ${todo.completed ? 'bg-gray-50' : ''}">
+                    <input type="checkbox" ${todo.completed ? 'checked' : ''} onchange="toggleTodo('${todo.id}')" class="w-5 h-5 text-primary rounded focus:ring-primary mr-3">
+                    <div class="flex-grow">
+                        <span class="${todo.completed ? 'line-through text-gray-500' : ''}">${todo.task}</span>
+                        <div class="flex items-center mt-1 text-sm">
+                            <span class="text-gray-500 mr-3"><i class="fa fa-calendar-o mr-1"></i> ${todo.deadline}</span>
+                            <span class="text-gray-400"><i class="fa fa-user-o mr-1"></i> ${todo.creator}</span>
+                        </div>
+                        ${todo.notes ? `<p class="text-xs text-gray-500 mt-1">${todo.notes}</p>` : ''}
+                    </div>
+                    <button onclick="deleteTodo('${todo.id}')" class="text-gray-400 hover:text-red-500 ml-2">
+                        <i class="fa fa-trash-o"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // 渲染消息
+        function renderMessages() {
+            const container = document.getElementById('messagesContainer');
+            
+            if (appData.messages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-16">
+                        <i class="fa fa-envelope text-gray-300 text-5xl mb-4"></i>
+                        <p class="text-gray-500">还没有悄悄话呢，给对方发一条吧！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = appData.messages.map(message => `
+                <div class="flex items-start ${message.sender === 'Victoria' ? 'justify-end' : ''}">
+                    ${message.sender === 'Annie' ? `
+                        <div class="w-10 h-10 rounded-full bg-annie/20 flex items-center justify-center mr-3 flex-shrink-0">
+                            <span class="font-bold text-annie">A</span>
+                        </div>
+                    ` : ''}
+                    <div class="max-w-[70%]">
+                        <div class="${message.sender === 'Victoria' ? 'bg-victoria/10 rounded-2xl rounded-tr-none' : 'bg-annie/10 rounded-2xl rounded-tl-none'} p-4">
+                            <p>${message.message}</p>
+                        </div>
+                        <p class="text-gray-400 text-xs mt-1 ${message.sender === 'Victoria' ? 'text-right' : 'ml-2'}">
+                            ${message.sender} · ${new Date(message.timestamp).toLocaleString()}
+                        </p>
+                    </div>
+                    ${message.sender === 'Victoria' ? `
+                        <div class="w-10 h-10 rounded-full bg-victoria/20 flex items-center justify-center ml-3 flex-shrink-0">
+                            <span class="font-bold text-victoria">V</span>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+            
+            // 滚动到底部
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 删除功能
+        async function deleteMemory(id) {
+            if (confirm('确定要删除这张照片吗？')) {
+                appData.memories = appData.memories.filter(m => m.id !== id);
+                await saveAllData();
+                renderMemories();
+            }
+        }
+
+        async function deleteDiary(id) {
+            if (confirm('确定要删除这篇日记吗？')) {
+                appData.diaries = appData.diaries.filter(d => d.id !== id);
+                await saveAllData();
+                renderDiaries();
+            }
+        }
+
+        async function deleteTodo(id) {
+            if (confirm('确定要删除这个待办事项吗？')) {
+                appData.todos = appData.todos.filter(t => t.id !== id);
+                await saveAllData();
+                renderTodos();
+            }
+        }
+
+        // 切换待办状态
+        async function toggleTodo(id) {
+            const todo = appData.todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                await saveAllData();
+                renderTodos();
+            }
+        }
+
+        // 待办筛选
+        document.getElementById('showAllTodos').addEventListener('click', function() {
+            currentTodoFilter = 'all';
+            setActiveFilter(this);
+            renderTodos();
+        });
+
+        document.getElementById('showActiveTodos').addEventListener('click', function() {
+            currentTodoFilter = 'active';
+            setActiveFilter(this);
+            renderTodos();
+        });
+
+        document.getElementById('showCompletedTodos').addEventListener('click', function() {
+            currentTodoFilter = 'completed';
+            setActiveFilter(this);
+            renderTodos();
+        });
+
+        function setActiveFilter(button) {
+            document.querySelectorAll('#showAllTodos, #showActiveTodos, #showCompletedTodos').forEach(btn => {
+                btn.classList.remove('bg-blue-100', 'text-primary');
+                btn.classList.add('bg-gray-100', 'text-gray-600');
+            });
+            button.classList.remove('bg-gray-100', 'text-gray-600');
+            button.classList.add('bg-blue-100', 'text-primary');
+        }
+
+        // 表单提交处理
+        document.getElementById('memoryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('photoFile');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                showToast('正在处理图片...', 'success');
+                const compressedImage = await compressImage(file);
+                
+                const memory = {
+                    id: Date.now().toString(),
+                    title: document.getElementById('photoTitle').value,
+                    date: document.getElementById('photoDate').value,
+                    desc: document.getElementById('photoDescription').value,
+                    photo: compressedImage,
+                    uploader: document.getElementById('photoUploader').value,
+                    timestamp: new Date().toISOString()
+                };
+                
+                appData.memories.unshift(memory);
+                await saveAllData();
+                renderMemories();
+                this.reset();
+            }
+        });
+
+        document.getElementById('diaryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const diary = {
+                id: Date.now().toString(),
+                title: document.getElementById('diaryTitle').value,
+                author: document.getElementById('diaryAuthor').value,
+                category: document.getElementById('diaryCategory').value,
+                content: document.getElementById('diaryContent').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            appData.diaries.unshift(diary);
+            await saveAllData();
+            renderDiaries();
+            this.reset();
+        });
+
+        document.getElementById('todoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const todo = {
+                id: Date.now().toString(),
+                task: document.getElementById('todoItem').value,
+                creator: document.getElementById('todoCreator').value,
+                deadline: document.getElementById('todoDate').value,
+                notes: document.getElementById('todoNotes').value,
+                completed: false,
+                timestamp: new Date().toISOString()
+            };
+            
+            appData.todos.unshift(todo);
+            await saveAllData();
+            renderTodos();
+            this.reset();
+        });
+
+        document.getElementById('messageForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const message = {
+                id: Date.now().toString(),
+                sender: document.getElementById('messageSender').value,
+                message: document.getElementById('messageInput').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            appData.messages.push(message);
+            await saveAllData();
+            renderMessages();
+            document.getElementById('messageInput').value = '';
+        });
+
+        // 计算相识天数
+        function calculateDays() {
+            const startDate = new Date('2021-04-01');
+            const now = new Date();
+            const diffTime = Math.abs(now - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('days-count').textContent = diffDays;
+            if (document.getElementById('days-count-mobile')) {
+                document.getElementById('days-count-mobile').textContent = diffDays;
+            }
+        }
+
         // 兔子对话功能
         const bunny = document.getElementById('bunny');
         const bunnySpeech = document.getElementById('bunny-speech');
         const bunnyText = document.getElementById('bunny-text');
         
-        // 兔子的可爱话语
         const bunnyPhrases = [
             "你们好呀！😊",
             "今天也是开心的一天呢！",
@@ -437,32 +1076,16 @@
         ];
         
         bunny.addEventListener('mouseenter', () => {
-            // 随机选择一句话
             const randomPhrase = bunnyPhrases[Math.floor(Math.random() * bunnyPhrases.length)];
             bunnyText.textContent = randomPhrase;
-            
-            // 显示对话框
             bunnySpeech.classList.remove('hidden');
         });
         
         bunny.addEventListener('mouseleave', () => {
-            // 隐藏对话框
             bunnySpeech.classList.add('hidden');
         });
-        
-        // 导航栏滚动效果
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('py-2', 'shadow');
-                navbar.classList.remove('py-3');
-            } else {
-                navbar.classList.add('py-3');
-                navbar.classList.remove('py-2', 'shadow');
-            }
-        });
-        
-        // 移动端菜单切换
+
+        // 移动端菜单
         const menuBtn = document.getElementById('menuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
         
@@ -474,13 +1097,12 @@
                 menuBtn.innerHTML = '<i class="fa fa-times text-xl"></i>';
             }
         });
-        
+
         // 平滑滚动
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 
-                // 关闭移动菜单（如果打开）
                 if (!mobileMenu.classList.contains('hidden')) {
                     mobileMenu.classList.add('hidden');
                     menuBtn.innerHTML = '<i class="fa fa-bars text-xl"></i>';
@@ -497,141 +1119,17 @@
                 }
             });
         });
+
+        // 初始化
+        calculateDays();
         
-        // 点赞功能
-        document.querySelectorAll('.like-btn').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                const type = this.getAttribute('data-type');
-                const id = this.getAttribute('data-id');
-                
-                // 获取当前登录用户（这里简化处理，实际应用可能需要登录系统）
-                const user = prompt('请输入你的名字 (Victoria/Annie):') || '';
-                if (!['Victoria', 'Annie'].includes(user)) {
-                    alert('请输入正确的名字哦！');
-                    return;
-                }
-                
-                try {
-                    const response = await fetch('/like', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ type, id, user })
-                    });
-                    
-                    const data = await response.json();
-                    if (data.success) {
-                        this.querySelector('.like-count').textContent = data.likes;
-                        
-                        // 更新图标状态
-                        const icon = this.querySelector('i');
-                        if (icon.classList.contains('fa-heart-o')) {
-                            icon.classList.remove('fa-heart-o');
-                            icon.classList.add('fa-heart');
-                            this.classList.add('text-primary');
-                        } else {
-                            icon.classList.remove('fa-heart');
-                            icon.classList.add('fa-heart-o');
-                            this.classList.remove('text-primary');
-                        }
-                    }
-                } catch (error) {
-                    console.error('点赞失败:', error);
-                }
-            });
-        });
-        
-        // 待办事项状态切换
-        document.querySelectorAll('.todo-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', async function() {
-                const id = this.getAttribute('data-id');
-                
-                try {
-                    const response = await fetch('/toggle-todo', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ id })
-                    });
-                    
-                    const data = await response.json();
-                    if (data.success) {
-                        // 更新UI
-                        const todoItem = this.closest('.todo-item');
-                        const taskText = this.nextElementSibling.querySelector('span');
-                        
-                        if (data.completed) {
-                            todoItem.classList.add('bg-gray-50');
-                            taskText.classList.add('line-through', 'text-gray-500');
-                        } else {
-                            todoItem.classList.remove('bg-gray-50');
-                            taskText.classList.remove('line-through', 'text-gray-500');
-                        }
-                    }
-                } catch (error) {
-                    console.error('更新待办事项失败:', error);
-                }
-            });
-        });
-        
-        // 待办事项筛选
-        document.getElementById('showAllTodos').addEventListener('click', function() {
-            setActiveFilter(this);
-            document.querySelectorAll('.todo-item').forEach(item => {
-                item.style.display = 'flex';
-            });
-        });
-        
-        document.getElementById('showActiveTodos').addEventListener('click', function() {
-            setActiveFilter(this);
-            document.querySelectorAll('.todo-item').forEach(item => {
-                const checkbox = item.querySelector('.todo-checkbox');
-                item.style.display = checkbox.checked ? 'none' : 'flex';
-            });
-        });
-        
-        document.getElementById('showCompletedTodos').addEventListener('click', function() {
-            setActiveFilter(this);
-            document.querySelectorAll('.todo-item').forEach(item => {
-                const checkbox = item.querySelector('.todo-checkbox');
-                item.style.display = checkbox.checked ? 'flex' : 'none';
-            });
-        });
-        
-        function setActiveFilter(button) {
-            // 重置所有按钮样式
-            document.querySelectorAll('#showAllTodos, #showActiveTodos, #showCompletedTodos').forEach(btn => {
-                btn.classList.remove('bg-blue-100', 'text-primary');
-                btn.classList.add('bg-gray-100', 'text-gray-600');
-            });
-            
-            // 设置当前按钮为活跃状态
-            button.classList.remove('bg-gray-100', 'text-gray-600');
-            button.classList.add('bg-blue-100', 'text-primary');
+        // 检查是否需要显示设置
+        const config = localStorage.getItem('jsonbin_config');
+        if (!config) {
+            document.getElementById('setupModal').classList.add('active');
+        } else {
+            loadAllData();
         }
-        
-        // 消息表单提交
-        document.getElementById('messageForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const messageInput = document.getElementById('messageInput');
-            const message = messageInput.value.trim();
-            
-            if (message) {
-                // 表单提交后会自动刷新页面
-                this.submit();
-            }
-        });
-        
-        // 将服务器传递的likes数据转换为JavaScript对象
-        window.likesData = [];
     </script>
-
-    <!-- 页面底部素材 -->
-    <div class="page-footer">
-        <img src="/images/cloud-star.png" alt="可爱云朵和星星" class="footer-cloud">
-    </div>
-
-
-</body></html>
+</body>
+</html>
