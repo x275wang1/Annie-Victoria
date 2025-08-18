@@ -7,7 +7,7 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d . -t .",
+    "deploy": "gh-pages -d .",
     "build": "echo 'Build completed'"
   },
   "dependencies": {
