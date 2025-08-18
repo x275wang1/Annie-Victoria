@@ -199,6 +199,9 @@
                     <button onclick="forceSync()" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 py-3 rounded-lg font-medium transition-colors">
                         强制同步数据
                     </button>
+                    <button onclick="testCurrentConnection()" class="w-full bg-yellow-100 hover:bg-yellow-200 text-yellow-700 py-3 rounded-lg font-medium transition-colors">
+                        测试当前连接
+                    </button>
                     <button onclick="exportConfig()" class="w-full bg-green-100 hover:bg-green-200 text-green-700 py-3 rounded-lg font-medium transition-colors">
                         导出配置
                     </button>
@@ -777,20 +780,66 @@
             try {
                 showToast('正在强制同步数据...', 'success');
                 
+                // 显示调试信息
+                console.log('开始强制同步...');
+                console.log('当前配置:', {
+                    apiKey: storage.apiKey ? '已设置' : '未设置',
+                    binId: storage.binId ? '已设置' : '未设置',
+                    isLocal: storage.isLocal
+                });
+                
                 // 清除本地缓存
                 localStorage.removeItem('app_data');
+                console.log('已清除本地缓存');
+                
+                // 重新初始化storage实例
+                storage.loadConfig();
+                console.log('重新加载配置完成');
                 
                 // 重新加载数据
+                console.log('开始加载数据...');
                 await loadAllData();
+                console.log('数据加载完成，当前数据:', appData);
                 
                 showToast('数据同步完成！', 'success');
                 
-                // 刷新页面显示
+                // 延迟刷新页面，给数据渲染时间
                 setTimeout(() => {
+                    console.log('准备刷新页面...');
                     window.location.reload();
-                }, 1000);
+                }, 2000);
             } catch (error) {
+                console.error('强制同步失败:', error);
                 showToast('同步失败：' + error.message, 'error');
+            }
+        }
+
+        // 测试当前连接
+        async function testCurrentConnection() {
+            try {
+                showToast('正在测试连接...', 'success');
+                
+                if (storage.isLocal) {
+                    showToast('当前使用本地模式，无需测试连接', 'info');
+                    return;
+                }
+                
+                if (!storage.apiKey || !storage.binId) {
+                    showToast('请先配置API Key和Bin ID', 'error');
+                    return;
+                }
+                
+                const result = await testConnection(storage.apiKey, storage.binId);
+                if (result.success) {
+                    showToast(`连接成功！找到 ${Object.keys(result.data).length} 个数据项`, 'success');
+                    console.log('连接测试成功，数据:', result.data);
+                } else {
+                    showToast('连接失败：' + result.error, 'error');
+                    console.error('连接测试失败:', result.error);
+                }
+            } catch (error) {
+                console.error('测试连接失败:', error);
+                showToast('测试失败：' + error.message, 'error');
             }
         }
 
