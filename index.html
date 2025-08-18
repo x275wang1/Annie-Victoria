@@ -196,6 +196,12 @@
                     <button onclick="useLocalMode()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-lg font-medium transition-colors">
                         使用本地模式（数据不同步）
                     </button>
+                    <button onclick="exportConfig()" class="w-full bg-green-100 hover:bg-green-200 text-green-700 py-3 rounded-lg font-medium transition-colors">
+                        导出配置
+                    </button>
+                    <button onclick="importConfig()" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 py-3 rounded-lg font-medium transition-colors">
+                        导入配置
+                    </button>
                     <button onclick="clearConfig()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 py-3 rounded-lg font-medium transition-colors">
                         清除配置
                     </button>
@@ -748,6 +754,70 @@
                     window.location.reload();
                 }, 1000);
             }
+        }
+
+        // 导出配置
+        function exportConfig() {
+            const config = localStorage.getItem('jsonbin_config');
+            if (!config) {
+                showToast('没有找到配置信息', 'error');
+                return;
+            }
+            
+            try {
+                const configData = JSON.parse(config);
+                const exportData = {
+                    apiKey: configData.apiKey,
+                    binId: configData.binId,
+                    exportDate: new Date().toISOString(),
+                    note: 'Victoria & Annie 网站配置信息'
+                };
+                
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'annie-victoria-config.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showToast('配置已导出到文件', 'success');
+            } catch (error) {
+                showToast('导出失败：' + error.message, 'error');
+            }
+        }
+
+        // 导入配置
+        function importConfig() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const configData = JSON.parse(e.target.result);
+                        
+                        if (configData.apiKey && configData.binId) {
+                            document.getElementById('apiKey').value = configData.apiKey;
+                            document.getElementById('binId').value = configData.binId;
+                            
+                            showToast('配置导入成功！请点击保存配置', 'success');
+                        } else {
+                            showToast('配置文件格式不正确', 'error');
+                        }
+                    } catch (error) {
+                        showToast('导入失败：' + error.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
         }
 
         // 显示设置
