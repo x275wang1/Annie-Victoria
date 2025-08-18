@@ -1,0 +1,22 @@
+{
+  "name": "victoria-annie-cute-website",
+  "version": "1.0.0",
+  "description": "A pure frontend website for Victoria and Annie to record their memories using JSONBin.io cloud storage",
+  "main": "index.html",
+  "scripts": {
+    "deploy": "gh-pages -d ."
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  },
+  "keywords": [
+    "frontend",
+    "website",
+    "memories",
+    "diary",
+    "todo",
+    "messages"
+  ],
+  "author": "Victoria & Annie",
+  "license": "MIT"
+}
