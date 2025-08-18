@@ -199,6 +199,9 @@
                     <button onclick="forceSync()" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 py-3 rounded-lg font-medium transition-colors">
                         强制同步数据
                     </button>
+                    <button onclick="syncToCloud()" class="w-full bg-teal-100 hover:bg-teal-200 text-teal-700 py-3 rounded-lg font-medium transition-colors">
+                        手动同步到云端
+                    </button>
                     <button onclick="testCurrentConnection()" class="w-full bg-yellow-100 hover:bg-yellow-200 text-yellow-700 py-3 rounded-lg font-medium transition-colors">
                         测试当前连接
                     </button>
@@ -207,6 +210,9 @@
                     </button>
                     <button onclick="inspectJSONBin()" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 py-3 rounded-lg font-medium transition-colors">
                         检查JSONBin库
+                    </button>
+                    <button onclick="refreshSync()" class="w-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 py-3 rounded-lg font-medium transition-colors">
+                        刷新同步数据
                     </button>
                     <button onclick="exportConfig()" class="w-full bg-green-100 hover:bg-green-200 text-green-700 py-3 rounded-lg font-medium transition-colors">
                         导出配置
@@ -837,6 +843,55 @@
             }
         }
 
+        // 手动同步到云端
+        async function syncToCloud() {
+            try {
+                showToast('正在同步到云端...', 'success');
+                
+                if (storage.isLocal) {
+                    showToast('当前使用本地模式，无法同步到云端', 'error');
+                    return;
+                }
+                
+                if (!storage.apiKey || !storage.binId) {
+                    showToast('请先配置API Key和Bin ID', 'error');
+                    return;
+                }
+                
+                console.log('开始手动同步到云端...');
+                console.log('当前本地数据:', appData);
+                
+                // 获取当前所有数据
+                const currentData = {
+                    memories: appData.memories || [],
+                    diaries: appData.diaries || [],
+                    todos: appData.todos || [],
+                    messages: appData.messages || []
+                };
+                
+                console.log('准备上传的数据:', currentData);
+                
+                // 保存到云端
+                const result = await storage.saveData(currentData);
+                
+                if (result) {
+                    console.log('数据成功同步到云端');
+                    showToast('数据已成功同步到云端！', 'success');
+                    
+                    // 显示同步结果
+                    const totalItems = currentData.memories.length + currentData.diaries.length + 
+                                     currentData.todos.length + currentData.messages.length;
+                    showToast(`同步完成！共上传 ${totalItems} 个数据项`, 'success');
+                } else {
+                    throw new Error('保存失败');
+                }
+                
+            } catch (error) {
+                console.error('同步到云端失败:', error);
+                showToast('同步失败：' + error.message, 'error');
+            }
+        }
+
         // 测试当前连接
         async function testCurrentConnection() {
             try {
@@ -1005,6 +1060,45 @@
             } catch (error) {
                 console.error('检查JSONBin.io库失败:', error);
                 showToast('检查失败：' + error.message, 'error');
+            }
+        }
+
+        // 刷新同步数据
+        async function refreshSync() {
+            try {
+                showToast('正在刷新同步数据...', 'success');
+                
+                if (storage.isLocal) {
+                    showToast('当前使用本地模式，无法同步远程数据', 'error');
+                    return;
+                }
+                
+                if (!storage.apiKey || !storage.binId) {
+                    showToast('请先配置API Key和Bin ID', 'error');
+                    return;
+                }
+                
+                console.log('开始刷新同步数据...');
+                
+                // 强制从远程加载数据
+                const remoteData = await storage.loadData();
+                console.log('远程数据加载成功:', remoteData);
+                
+                // 更新本地数据
+                appData = remoteData;
+                
+                // 保存到本地作为备份
+                storage.saveLocalData(remoteData);
+                
+                // 渲染数据
+                renderAllData();
+                
+                showToast('数据同步完成！', 'success');
+                console.log('数据同步完成');
+                
+            } catch (error) {
+                console.error('刷新同步数据失败:', error);
+                showToast('同步失败：' + error.message, 'error');
             }
         }
 
@@ -1502,7 +1596,39 @@
         if (!config) {
             document.getElementById('setupModal').classList.add('active');
         } else {
-            loadAllData();
+            // 强制从远程加载数据，解决手机刷新后数据丢失问题
+            console.log('开始初始化数据...');
+            
+            // 检查是否使用JSONBin.io
+            if (storage && !storage.isLocal && storage.apiKey && storage.binId) {
+                console.log('检测到JSONBin.io配置，强制从远程加载数据...');
+                
+                // 延迟一点加载，确保storage实例已初始化
+                setTimeout(async () => {
+                    try {
+                        // 强制从远程加载数据
+                        const remoteData = await storage.loadData();
+                        console.log('远程数据加载成功:', remoteData);
+                        
+                        // 更新本地数据
+                        appData = remoteData;
+                        
+                        // 保存到本地作为备份
+                        storage.saveLocalData(remoteData);
+                        
+                        // 渲染数据
+                        renderAllData();
+                        
+                        console.log('远程数据同步完成');
+                    } catch (error) {
+                        console.error('远程数据加载失败，回退到本地数据:', error);
+                        loadAllData();
+                    }
+                }, 100);
+            } else {
+                console.log('使用本地模式或配置不完整，加载本地数据...');
+                loadAllData();
+            }
         }
     </script>
 </body>
